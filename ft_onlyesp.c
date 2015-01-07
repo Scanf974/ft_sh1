@@ -21,7 +21,7 @@ char	ft_onlyesp(char *str)
 	i = 0;
 	while (str[i])
 	{
-		if (str[i] != ' ')
+		if (str[i] > ' ')
 		{
 			ret = 0;
 			break ;

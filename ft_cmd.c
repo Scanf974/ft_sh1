@@ -11,40 +11,32 @@
 /* ************************************************************************** */
 
 #include "ft_minishell1.h"
+#include <stdio.h> //pqs de printf
 
 static int	ft_builtins(char *cmd, char ***env, int rt)
 {
 	int		ret;
+	char	*after;
 
 	ret = rt;
+	if (ft_onlyesp(cmd))
+		return (rt);
+	after = ft_strdup(cmd + ft_strlen(ft_getcmd(cmd)));
 	if (ft_strnequ(cmd, "exit", 4))
 		exit(0);
 	if (ft_strnequ(cmd, "env", 3))
 		ret = ft_env(*env);
 	else if (ft_strnequ(cmd, "cd", 2))
-	{
-		if (ft_strlen(cmd) > 2)
-			ret = ft_cd(env,cmd + 2);
-		else
-			return (-1);
-	}
+		ret = ft_cd(env, after);
 	else if (ft_strnequ(cmd, "pwd", 3))
 	{
 		ft_putendl(ft_pwd());
 		ret = 0;
 	}
 	else if (ft_strnequ(cmd, "export", 6))
-	{
-		if (ft_strlen(cmd) > 6)
-			ret = ft_setenv(env, cmd + 6);
-		else
-			return (-1);
-	}
+		ret = ft_setenv(env, after);
 	else if (ft_strnequ(cmd, "unset", 5))
-	{
-		ret = ft_unsetenv(env, cmd + 5);
-		return (ret);
-	}
+		ret = ft_unsetenv(env, after);
 	else if (!ft_onlyesp(cmd))
 		ret = 1;
 	return (ret);
@@ -56,8 +48,7 @@ static int	ft_what(char *cmd, char ***env, char **path, int rt)
 	int		i;
 
 	i = 0;
-	if (ft_strlen(cmd) > 0)
-		cmd = ft_strtrim(ft_fuckit(cmd));
+	cmd = ft_strtrim_new(cmd);
 	if ((ret = ft_builtins(cmd, env, rt)) == -1)
 		return (-1);
 	else if (!ft_onlyesp(cmd) && ret == 1)
@@ -91,7 +82,7 @@ int			ft_cmd(char **env, char **path)
 	int		ret;
 
 	ret = 0;
-	cmd = ft_strdup(" ");
+	cmd = ft_strdup("");
 	while (1)
 	{
 		cmd = ft_prompt(env, ret);

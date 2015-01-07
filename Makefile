@@ -14,6 +14,7 @@ SRC = main.c \
 	  ft_strsplit_white_space.c \
 	  ft_fuckit.c \
 	  ft_exec.c \
+	  ft_strtrim_new.c \
 	  ft_env.c
 OBJ = $(SRC:.c=.o)
 NAME = ft_minishell1

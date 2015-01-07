@@ -57,13 +57,10 @@ int			ft_unsetenv(char ***env, char *del)
 
 	id = 0;
 	nb_env = ft_nbenv(*env);
-	ft_putchar(del[0]);
 	if (!ft_strlen(del))
-	{
+		return (0);
+	if (ft_onlyesp(del))
 		ft_putendl("unset: not enought arguments");
-		return (-1);
-	}
-
 	while ((*env)[id] && !ft_strnequ((*env)[id], del, ft_strlen(del)))
 		id++;
 	if (id < nb_env)

@@ -51,9 +51,14 @@ int			ft_setenv(char ***env, char *xport)
 	int		eq;
 	int		id;
 
-	if (!xport || !ft_strlen(xport) || ft_pos_eq(xport) == -1)
-		return (-1);
-	eq = ft_pos_eq(xport);
+	xport = ft_strtrim(xport);
+	if (!xport || ft_onlyesp(xport))
+	{
+		ft_env(*env);
+		return (0);
+	}
+	if ((eq = ft_pos_eq(xport)) == -1)
+		return (0);
 	if ((id = ft_get_id_var(*env, ft_strsub(xport, 0, eq))) != -1)
 		(*env)[id] = ft_strjoin(ft_strndup(xport, eq + 1), xport + eq + 1);
 	else

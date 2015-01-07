@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "ft_minishell1.h"
+#include <stdio.h> //pas de printf
 
 static int	ft_nbargv(char *str)
 {
@@ -19,11 +20,15 @@ static int	ft_nbargv(char *str)
 
 	nb = 0;
 	i = 0;
-	while (str[i])
+
+	if (str)
 	{
-		if (str[i] > ' ' && (str[i + 1] <= ' ' || !str[i + 1]))
-			nb++;
-		i++;
+		while (str[i])
+		{
+			if (str[i] > ' ' && (str[i + 1] <= ' ' || !str[i + 1]))
+				nb++;
+			i++;
+		}
 	}
 	return (nb);
 }
@@ -58,7 +63,7 @@ static int	ft_not_dir(char *path)
 {
 	struct stat		buf;
 
-	if (ft_strnequ(path, "-", 1) || ft_strnequ(path, "~", 1))
+	if (ft_onlyesp(path) || ft_strnequ(path, "-", 1) || ft_strnequ(path, "~", 1))
 		return (0);
 	if (lstat(path, &buf) == 0 && !S_ISDIR(buf.st_mode) && !S_ISLNK(buf.st_mode))
 	{
@@ -127,12 +132,12 @@ int			ft_cd(char ***env, char *path)
 	int				ret;
 
 	ret = 0;
+	path = ft_strtrim_new(path);
 	if (ft_error_cd(*env, path) || ft_not_dir(path))
 		return (-1);
 	bzero(&buf, sizeof(buf));
-	if (ft_strnequ(path, "~", 1) || ft_strnequ(path, "--", 2))
+	if (ft_onlyesp(path) || ft_strnequ(path, "~", 1) || ft_strnequ(path, "--", 2))
 	{
-
 		if ((id_home = ft_get_id_var(*env, "HOME")) != -1)
 			path = ft_strjoin(&env[0][id_home][5], path + ft_strlen(path));
 	}

@@ -33,5 +33,6 @@ char	*ft_getcmd(char *cmd);
 char	**ft_strsplit_white_space(char const *s);
 char	*ft_fuckit(char *s);
 int		ft_exec(char *bin, char *cmd, char **env);
+char	*ft_strtrim_new(char const *s);
 
 #endif

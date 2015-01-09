@@ -12,17 +12,20 @@
 
 #include "ft_minishell1.h"
 
-int		ft_env(char **env)
+int		ft_env(char **env, char *after)
 {
 	int		i;
 
 	i = 0;
 	if (!env)
 		return (-1);
-	while (env[i])
+	if (ft_onlyesp(after))
 	{
-		ft_putendl(env[i]);
-		i++;
+		while (env[i])
+		{
+			ft_putendl(env[i]);
+			i++;
+		}
 	}
 	return (0);
 }

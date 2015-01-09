@@ -25,7 +25,7 @@ static int	ft_builtins(char *cmd, char ***env, int rt)
 	if (ft_strnequ(cmd, "exit", 4))
 		exit(0);
 	if (ft_strnequ(cmd, "env", 3))
-		ret = ft_env(*env);
+		ret = ft_env(*env, after);
 	else if (ft_strnequ(cmd, "cd", 2))
 		ret = ft_cd(env, after);
 	else if (ft_strnequ(cmd, "pwd", 3))
@@ -76,15 +76,26 @@ static int	ft_what(char *cmd, char ***env, char **path, int rt)
 	return (ret);
 }
 
-int			ft_cmd(char **env, char **path)
+int			ft_cmd(char **env)
 {
 	char	*cmd;
 	int		ret;
+	char	**path;
 
 	ret = 0;
 	cmd = ft_strdup("");
+	path = NULL;
 	while (1)
 	{
+		if (path)
+			free(path);
+		path = ft_getpath(env);
+		if (path == NULL)
+		{
+			path = (char **)malloc(sizeof(char *) * 2);
+			path[0] = ft_strdup("");
+			path[1] = NULL;
+		}
 		cmd = ft_prompt(env, ret);
 		ret = ft_what(cmd, &env, path, ret);
 	}

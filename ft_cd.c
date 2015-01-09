@@ -49,7 +49,7 @@ static int	ft_error_cd(char **env, char *path)
 			ft_putendl("cd: too many arguments");
 			return (-1);
 		}
-		else if (!ft_strnequ(path, after_pwd, ft_strlen(after_pwd)))
+		else if (!ft_strequ(ft_strstr(ft_pwd(), ft_getcmd(path)), ft_getcmd(path)))
 		{
 			ft_putstr("cd: string not in pwd: ");
 			ft_putendl(ft_getcmd(path));
@@ -63,6 +63,8 @@ static int	ft_not_dir(char *path)
 {
 	struct stat		buf;
 
+	if (ft_nbargv(path) > 1)
+		path = ft_strtrim_new(path + ft_strlen(ft_getcmd(path)));
 	if (ft_onlyesp(path) || ft_strnequ(path, "-", 1) || ft_strnequ(path, "~", 1))
 		return (0);
 	if (lstat(path, &buf) == 0 && !S_ISDIR(buf.st_mode) && !S_ISLNK(buf.st_mode))
@@ -114,6 +116,7 @@ static void	ft_switch(char ***env)
 	char	*temp;
 
 	id_pwd = ft_get_id_var(*env, "PWD");
+	ft_setenv(env, "OLDPWD=");
 	id_oldpwd = ft_get_id_var(*env, "OLDPWD");
 	if (id_pwd != -1 && id_oldpwd != -1)
 	{
@@ -133,6 +136,8 @@ int			ft_cd(char ***env, char *path)
 
 	ret = 0;
 	path = ft_strtrim_new(path);
+	if (ft_nbargv(path) > 1)
+		path = ft_strjoin(ft_getpath_pwd(ft_getcmd(path)), ft_strtrim_new(path + ft_strlen(ft_getcmd(path))));
 	if (ft_error_cd(*env, path) || ft_not_dir(path))
 		return (-1);
 	bzero(&buf, sizeof(buf));

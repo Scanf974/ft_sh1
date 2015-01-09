@@ -18,8 +18,10 @@ char	**ft_getpath(char **env)
 	char	**path;
 
 	i = 0;
-	while (!ft_strnequ(env[i], "PATH", 4))
+	while (env[i] && !ft_strnequ(env[i], "PATH", 4))
 		i++;
+	if (i >= ft_nb_env(env))
+		return (NULL);
 	path = ft_strsplit(&env[i][5], ':');
 	return (path);
 }

@@ -20,8 +20,10 @@
 
 char	*ft_prompt(char **env, int ret);
 char	**ft_getpath(char **env);
-int		ft_env(char **env);
-int		ft_cmd(char **env, char **path);
+char	*ft_getdir(char *path);
+char	*ft_getpath_pwd(char *path);
+int		ft_env(char **env, char *after);
+int		ft_cmd(char **env);
 int		ft_cd(char ***env, char *path);
 char	ft_onlyesp(char *str);
 char	*ft_pwd(void);
@@ -33,6 +35,7 @@ char	*ft_getcmd(char *cmd);
 char	**ft_strsplit_white_space(char const *s);
 char	*ft_fuckit(char *s);
 int		ft_exec(char *bin, char *cmd, char **env);
+int		ft_nb_env(char **env);
 char	*ft_strtrim_new(char const *s);
 
 #endif

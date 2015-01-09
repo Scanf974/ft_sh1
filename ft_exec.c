@@ -12,7 +12,7 @@
 
 #include "ft_minishell1.h"
 
-int                 ft_exec(char *bin, char *cmd, char **env)
+int			ft_exec(char *bin, char *cmd, char **env)
 {
 	pid_t           child;
 	int             status;

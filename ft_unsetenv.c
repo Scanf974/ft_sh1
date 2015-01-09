@@ -61,11 +61,18 @@ int			ft_unsetenv(char ***env, char *del)
 		return (0);
 	if (ft_onlyesp(del))
 		ft_putendl("unset: not enought arguments");
-	while ((*env)[id] && !ft_strnequ((*env)[id], del, ft_strlen(del)))
-		id++;
-	if (id < nb_env)
-		*env = ft_realloc_env(*env, id);
-	else
-		return (-1);
+	del = ft_strtrim_new(del);
+	while (*del)
+	{
+		while (*del <= ' ')
+			del++;
+		while ((*env)[id] && !ft_strnequ((*env)[id], del, ft_strlen_esp(del)))
+			id++;
+		if (id < nb_env)
+			*env = ft_realloc_env(*env, id);
+		else
+			return (-1);
+		del += ft_strlen_esp(del);
+	}
 	return (0);
 }

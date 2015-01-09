@@ -15,6 +15,9 @@ SRC = main.c \
 	  ft_fuckit.c \
 	  ft_exec.c \
 	  ft_strtrim_new.c \
+	  ft_getdir.c \
+	  ft_getpath_pwd.c \
+	  ft_nb_env.c \
 	  ft_env.c
 OBJ = $(SRC:.c=.o)
 NAME = ft_minishell1
@@ -25,6 +28,7 @@ all: $(NAME)
 
 $(NAME):
 	@make -C libft/
+	@echo "Dat Shell -> Maked"
 	@$(CC) $(FLAGS) -I libft/includes/ -c $(SRC)
 	@$(CC) -o $(NAME) $(OBJ) $(LIB)
 

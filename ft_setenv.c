@@ -51,17 +51,23 @@ int			ft_setenv(char ***env, char *xport)
 	int		eq;
 	int		id;
 
-	xport = ft_strtrim(xport);
 	if (!xport || ft_onlyesp(xport))
 	{
-		ft_env(*env);
+		ft_env(*env, "");
 		return (0);
 	}
-	if ((eq = ft_pos_eq(xport)) == -1)
-		return (0);
-	if ((id = ft_get_id_var(*env, ft_strsub(xport, 0, eq))) != -1)
-		(*env)[id] = ft_strjoin(ft_strndup(xport, eq + 1), xport + eq + 1);
-	else
-		*env = ft_realloc_env(*env, xport);
+	xport = ft_strtrim(xport);
+	while (*xport)
+	{
+		while (*xport <= ' ')
+			xport++;
+		if ((eq = ft_pos_eq(xport)) == -1)
+			return (0);
+		if ((id = ft_get_id_var(*env, ft_strsub(xport, 0, eq))) != -1)
+			(*env)[id] = ft_strjoin(ft_strndup(xport, eq + 1), ft_strndup(xport + eq + 1, ft_strlen_esp(xport + eq + 1)));
+		else
+			*env = ft_realloc_env(*env, ft_strndup(xport, ft_strlen_esp(xport)));
+		xport += ft_strlen_esp(xport);
+	}
 	return (0);
 }

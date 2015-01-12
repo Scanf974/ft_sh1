@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "ft_minishell1.h"
-#include <stdio.h> //pqs de printf
 
 static int	ft_builtins(char *cmd, char ***env, int rt)
 {
@@ -48,29 +47,33 @@ static int	ft_what(char *cmd, char ***env, char **path, int rt)
 	int		i;
 
 	i = 0;
+	ret = rt;
 	cmd = ft_strtrim_new(cmd);
-	if ((ret = ft_builtins(cmd, env, rt)) == -1)
-		return (-1);
-	else if (!ft_onlyesp(cmd) && ret == 1)
+	if (cmd)
 	{
-		while (path[i] && !ft_cmd_is_in_path(ft_getcmd(cmd), path[i]))
-			i++;
-		if (!path[i])
+		if ((ret = ft_builtins(cmd, env, rt)) == -1)
+			return (-1);
+		else if (!ft_onlyesp(cmd) && ret == 1)
 		{
-
-			if (access(ft_getcmd(cmd), X_OK) == 0)
-				ret = ft_exec(ft_getcmd(cmd), cmd, *env);
-			else
+			while (path[i] && !ft_cmd_is_in_path(ft_getcmd(cmd), path[i]))
+				i++;
+			if (!path[i])
 			{
-				ft_putstr("ft_sh1: command not found: ");
-				ft_putendl(ft_getcmd(cmd));
-				return (-1);
+
+				if (access(ft_getcmd(cmd), X_OK) == 0)
+					ret = ft_exec(ft_getcmd(cmd), cmd, *env);
+				else
+				{
+					ft_putstr("ft_sh1: command not found: ");
+					ft_putendl(ft_getcmd(cmd));
+					return (-1);
+				}
 			}
-		}
-		else if (path[i])
-		{
-			ret = ft_exec(ft_strjoin(ft_strjoin(path[i], "/"), ft_getcmd(cmd)), cmd, *env);
-			return (ret);
+			else if (path[i])
+			{
+				ret = ft_exec(ft_strjoin(ft_strjoin(path[i], "/"), ft_getcmd(cmd)), cmd, *env);
+				return (ret);
+			}
 		}
 	}
 	return (ret);
@@ -83,7 +86,6 @@ int			ft_cmd(char **env)
 	char	**path;
 
 	ret = 0;
-	cmd = ft_strdup("");
 	path = NULL;
 	while (1)
 	{
@@ -98,6 +100,7 @@ int			ft_cmd(char **env)
 		}
 		cmd = ft_prompt(env, ret);
 		ret = ft_what(cmd, &env, path, ret);
+		free(cmd);
 	}
 	return (0);
 }

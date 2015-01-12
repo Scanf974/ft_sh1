@@ -14,11 +14,17 @@
 # define FT_MINISHELL1
 
 # include <sys/stat.h>
+# include <sys/wait.h>
+# include <fcntl.h>
 # include <dirent.h>
+# include <signal.h>
+# include <termios.h>
+# include <stdio.h> ///////
 # include "libft.h"
 # include "get_next_line.h"
 
 char	*ft_prompt(char **env, int ret);
+void	ft_disable_sig(void);
 char	**ft_getpath(char **env);
 char	*ft_getdir(char *path);
 char	*ft_getpath_pwd(char *path);

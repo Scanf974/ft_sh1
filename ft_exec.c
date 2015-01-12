@@ -15,10 +15,11 @@
 int			ft_exec(char *bin, char *cmd, char **env)
 {
 	pid_t           child;
+	int				ret;
 	int             status;
-	char            **tab;
 
 	child = fork();
+	ret = 0;
 	if (child < 0)
 		return (-1);
 	if (child > 0)
@@ -27,8 +28,7 @@ int			ft_exec(char *bin, char *cmd, char **env)
 	}
 	else
 	{
-		tab = ft_strsplit_white_space(cmd);
-		execve(bin, tab, env);
+		execve(bin, ft_strsplit_white_space(cmd), env);
 		exit(-1);
 	}
 	return (WEXITSTATUS(status));

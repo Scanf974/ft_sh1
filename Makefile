@@ -1,6 +1,7 @@
 CC = gcc
 SRC = main.c \
 	  ft_prompt.c \
+	  ft_disable_sig.c \
 	  ft_getpath.c \
 	  ft_cmd.c \
 	  ft_cd.c \

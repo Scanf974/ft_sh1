@@ -4,8 +4,10 @@ char	*ft_strtrim_new(char const *s)
 {
 	int		i;
 	char	*tmp;
+	char	*dst;
 
 	tmp = (char *)s;
+	dst = NULL;
 	i = 0;
 	if (tmp)
 	{
@@ -18,6 +20,7 @@ char	*ft_strtrim_new(char const *s)
 		i = 0;
 		while (tmp[i] && tmp[i] <= ' ')
 			i++;
+		dst = ft_strdup(&tmp[i]);
 	}
-	return (ft_strdup(&tmp[i]));
+	return (dst);
 }

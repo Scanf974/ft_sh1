@@ -14,7 +14,9 @@
 
 int		main(int argc, char **argv, char **env)
 {
-	char	**saint_env;
+	char			**saint_env;
+	int				fd = STDOUT_FILENO;
+	struct termios	term_attributes;
 
 	(void)argc;
 	(void)argv;
@@ -35,6 +37,29 @@ int		main(int argc, char **argv, char **env)
 	ft_putendl("                             *c::::::;*");
 	ft_putendl("                               `^**^`");
 	saint_env = (char **)malloc(sizeof(char *) * 2);
+	ft_disable_sig();
+
+	if (!isatty(fd))
+		return(1);
+	else
+	{
+		if (tcgetattr(fd, &term_attributes) != 0)
+		{
+			perror("tcgetattr error");
+			return(EXIT_FAILURE);
+		}
+		term_attributes.c_lflag = term_attributes.c_lflag & ~ICANON;
+		term_attributes.c_lflag = term_attributes.c_lflag & ~ECHO;
+		term_attributes.c_cc[VMIN] = 1;
+		term_attributes.c_cc[VTIME] = 0;
+		if (tcsetattr(fd, TCSADRAIN, &term_attributes) == -1)
+		{
+			perror("tcsetattr");
+			return (1);
+		}
+
+	}
+
 	if (ft_nb_env(env))
 	{
 		ft_setenv(&env, "OLDPWD= ");
@@ -46,6 +71,13 @@ int		main(int argc, char **argv, char **env)
 		ft_setenv(&saint_env, "USER=bsautron");
 		ft_setenv(&saint_env, "PATH=/bin:/usr/bin");
 		ft_cmd(saint_env);
+	}
+	term_attributes.c_lflag = term_attributes.c_lflag | ICANON;
+	term_attributes.c_lflag = term_attributes.c_lflag | ECHO;
+	if (tcsetattr(fd, TCSADRAIN, &term_attributes) == -1)
+	{
+		perror("tcsetattr");
+		return (1);
 	}
 
 	return (0);

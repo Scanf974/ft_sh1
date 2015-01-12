@@ -37,7 +37,7 @@ int		main(int argc, char **argv, char **env)
 	ft_putendl("                             *c::::::;*");
 	ft_putendl("                               `^**^`");
 	saint_env = (char **)malloc(sizeof(char *) * 2);
-	ft_disable_sig();
+	//ft_disable_sig();
 
 	if (!isatty(fd))
 		return(1);

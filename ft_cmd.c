@@ -21,7 +21,7 @@ static int	ft_builtins(char *cmd, char ***env, int rt)
 	if (ft_onlyesp(cmd))
 		return (rt);
 	after = ft_strdup(cmd + ft_strlen(ft_getcmd(cmd)));
-	if (ft_strnequ(cmd, "exit", 4))
+	if (ft_strnequ(cmd, "exit", 4) && cmd[4] <= ' ')
 		exit(0);
 	if (ft_strnequ(cmd, "env", 3))
 		ret = ft_env(*env, after);
@@ -100,6 +100,7 @@ int			ft_cmd(char **env)
 		}
 		cmd = ft_prompt(env, ret);
 		ret = ft_what(cmd, &env, path, ret);
+		ft_putchar(10);
 		free(cmd);
 	}
 	return (0);

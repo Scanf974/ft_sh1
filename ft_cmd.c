@@ -64,7 +64,7 @@ static int	ft_what(char *cmd, char ***env, char **path, int rt)
 					ret = ft_exec(ft_getcmd(cmd), cmd, *env);
 				else
 				{
-					ft_putstr("ft_sh1: command not found: ");
+					ft_putstr_fd("ft_sh1: command not found: ", 2);
 					ft_putendl(ft_getcmd(cmd));
 					return (-1);
 				}
@@ -100,7 +100,7 @@ int			ft_cmd(char **env)
 		}
 		cmd = ft_prompt(env, ret);
 		ret = ft_what(cmd, &env, path, ret);
-		ft_putchar(10);
+		ft_putstr("\033[30;47m%\033[0m\n");
 		free(cmd);
 	}
 	return (0);

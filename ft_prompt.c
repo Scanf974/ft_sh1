@@ -59,7 +59,7 @@ char		**ft_make_history(int *nb_hist)
 	int		fd;
 	int		i;
 
-	fd = open(".minishell1_history", O_CREAT & O_RDWR);
+	fd = open(".minishell1_history", O_CREAT | O_RDWR, 0600);
 	while (get_next_line(fd, &line) > 0)
 		(*nb_hist)++;
 	close(fd);

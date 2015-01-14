@@ -1,31 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_exec.c                                          :+:      :+:    :+:   */
+/*   ft_get_prev_dir.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bsautron <bsautron@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2015/01/03 02:25:48 by bsautron          #+#    #+#             */
-/*   Updated: 2015/01/14 02:10:36 by bsautron         ###   ########.fr       */
+/*   Created: 2015/01/14 06:24:21 by bsautron          #+#    #+#             */
+/*   Updated: 2015/01/14 06:27:37 by bsautron         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_minishell1.h"
 
-int			ft_exec(char *bin, char *cmd, char **env)
+char	*ft_get_prev_dir(char *path)
 {
-	pid_t		child;
-	int			status;
+	int		i;
 
-	child = fork();
-	if (child < 0)
-		return (-1);
-	if (child > 0)
-		waitpid(child, &status, 0);
-	else
+	i = ft_strlen(path) - 1;
+	while (path[i] && path[i] != '/')
 	{
-		execve(bin, ft_strsplit_white_space(cmd), env);
-		exit(-1);
+		path[i] = '\0';
+		i--;
 	}
-	return (WEXITSTATUS(status));
+	return (path);
 }

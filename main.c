@@ -6,20 +6,14 @@
 /*   By: bsautron <bsautron@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2014/12/25 03:21:58 by bsautron          #+#    #+#             */
-/*   Updated: 2015/01/03 02:22:41 by bsautron         ###   ########.fr       */
+/*   Updated: 2015/01/14 04:54:55 by bsautron         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_minishell1.h"
 
-int		main(int argc, char **argv, char **env)
+static void	ft_heisenberg(void)
 {
-	char			**saint_env;
-	int				fd = STDOUT_FILENO;
-	struct termios	term_attributes;
-
-	(void)argc;
-	(void)argv;
 	ft_putendl("                         @EEEEEEEEEEEEESSEQ.");
 	ft_putendl("                         EEEEEEEEEEEEEEEEE3L");
 	ft_putendl("                        JEEEEEEEEEEEEEEEEEE[");
@@ -36,30 +30,40 @@ int		main(int argc, char **argv, char **env)
 	ft_putendl("                           \"[L:::::.:::yF");
 	ft_putendl("                             *c::::::;*");
 	ft_putendl("                               `^**^`");
-	saint_env = (char **)malloc(sizeof(char *) * 2);
-	//ft_disable_sig();
+}
 
-	if (!isatty(fd))
-		return(1);
-	else
+static void	ft_tcg(char f)
+{
+	static int				fd;
+	static struct termios	term_attributes;
+
+	fd = STDOUT_FILENO;
+	if (f == 0)
 	{
-		if (tcgetattr(fd, &term_attributes) != 0)
-		{
-			perror("tcgetattr error");
-			return(EXIT_FAILURE);
-		}
+		tcgetattr(fd, &term_attributes);
 		term_attributes.c_lflag = term_attributes.c_lflag & ~ICANON;
-		term_attributes.c_lflag = term_attributes.c_lflag & ~ECHO;
+		term_attributes.c_lflag = term_attributes.c_lflag
+			& ~(ECHOK | ECHO | ECHONL | ECHOE | IEXTEN);
 		term_attributes.c_cc[VMIN] = 1;
 		term_attributes.c_cc[VTIME] = 0;
-		if (tcsetattr(fd, TCSADRAIN, &term_attributes) == -1)
-		{
-			perror("tcsetattr");
-			return (1);
-		}
-
+		tcsetattr(fd, TCSADRAIN, &term_attributes);
 	}
+	else
+	{
+		term_attributes.c_lflag = term_attributes.c_lflag | ICANON;
+		term_attributes.c_lflag = term_attributes.c_lflag | ECHO;
+		tcsetattr(fd, TCSADRAIN, &term_attributes);
+	}
+}
 
+int			main(int argc, char **argv, char **env)
+{
+	char			**saint_env;
+
+	(void)argc;
+	(void)argv;
+	ft_heisenberg();
+	ft_tcg(0);
 	if (ft_nb_env(env))
 	{
 		ft_setenv(&env, "OLDPWD= ");
@@ -67,18 +71,15 @@ int		main(int argc, char **argv, char **env)
 	}
 	else
 	{
-		ft_setenv(&saint_env, "PWD=/Volumes/Data/nfs/zfs-student-3/users/2014/bsautron/Semestre01/ft_sh1");
-		ft_setenv(&saint_env, "USER=bsautron");
-		ft_setenv(&saint_env, "PATH=/bin:/usr/bin");
-		ft_cmd(saint_env);
+		if ((saint_env = (char **)malloc(sizeof(char *) * 4)) != NULL)
+		{
+			saint_env[0] = ft_strjoin("PWD=", ft_pwd());
+			saint_env[1] = ft_strdup("USER=bsautron");
+			saint_env[2] = ft_strdup("PATH=/bin:/usr/bin");
+			saint_env[3] = NULL;
+			ft_cmd(saint_env);
+		}
 	}
-	term_attributes.c_lflag = term_attributes.c_lflag | ICANON;
-	term_attributes.c_lflag = term_attributes.c_lflag | ECHO;
-	if (tcsetattr(fd, TCSADRAIN, &term_attributes) == -1)
-	{
-		perror("tcsetattr");
-		return (1);
-	}
-
+	ft_tcg(1);
 	return (0);
 }

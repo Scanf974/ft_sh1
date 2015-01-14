@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: bsautron <bsautron@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2014/12/25 03:24:48 by bsautron          #+#    #+#             */
-/*   Updated: 2015/01/03 03:04:42 by bsautron         ###   ########.fr       */
+/*   Created: 2015/01/14 02:25:46 by bsautron          #+#    #+#             */
+/*   Updated: 2015/01/14 05:18:06 by bsautron         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,24 +26,37 @@ static char	*ft_get_dirname(void)
 	return (path + len + 1);
 }
 
+
 static char	*ft_delone(char *cmd)
 {
+	if (ft_strlen(cmd) > 0)
+	{
+		ft_putstr("\033[1D");
+		ft_putstr(" ");
+		ft_putstr("\033[1D");
+	}
 	cmd[ft_strlen(cmd) - 1] = '\0';
 	return (cmd);
 }
 
 static void	ft_prompt2(char **env, int ret, int id_usr)
 {
-	ft_putstr("\033[2K\r");
 	if (ret == 0)
 	{
-		ft_putstr("➜ ");
-		ft_putstr("\033[1;30;47m"); //Blanc
+		ft_putchar(-30);
+		ft_putchar(-98);
+		ft_putchar(-100);
+		ft_putchar(' ');
+		ft_putstr("\033[1;30;47m");
 	}
 	else
 	{
-		ft_putstr("\x1b[31m➜ ");
-		ft_putstr("\033[1;31;47m"); //Rouge
+		ft_putstr("\x1b[31m");
+		ft_putchar(-30);
+		ft_putchar(-98);
+		ft_putchar(-100);
+		ft_putchar(' ');
+		ft_putstr("\033[1;31;47m");
 	}
 	if (id_usr != -1 && ft_strequ(ft_get_dirname(), &env[id_usr][5]))
 		ft_putstr("~");
@@ -52,7 +65,7 @@ static void	ft_prompt2(char **env, int ret, int id_usr)
 	ft_putstr("\033[0;37;40m ");
 }
 
-char		**ft_make_history(int *nb_hist)
+static char	**ft_make_history(int *nb_hist)
 {
 	char	*line;
 	char	**tab;
@@ -76,11 +89,24 @@ char		**ft_make_history(int *nb_hist)
 	return (tab);
 }
 
+static void	ft_nclear(size_t n)
+{
+	size_t		i;
+
+	i = 0;
+	while (i < n)
+	{
+		ft_putstr("\033[1D");
+		ft_putstr(" ");
+		ft_putstr("\033[1D");
+		i++;
+	}
+}
+
 char		*ft_prompt(char **env, int ret)
 {
 	char			*cmd;
 	char			**history;
-	int				ret_gnl;
 	int				id_usr;
 	char			c[2];
 	char			cac;
@@ -90,7 +116,6 @@ char		*ft_prompt(char **env, int ret)
 
 	nb = 0;
 	history = ft_make_history(&nb);
-	ret_gnl = 0;
 	id_usr = ft_get_id_var(env, "USER");
 	ft_prompt2(env, ret, id_usr);
 	cmd = ft_strnew(1);
@@ -113,22 +138,25 @@ char		*ft_prompt(char **env, int ret)
 				if (i > nb)
 					i = nb;
 			}
+			ft_nclear(ft_strlen(cmd));
 			if (i == nb && (*c == 'A' || *c == 'B'))
 				cmd = ft_strdup("");
 			else if (*c == 'A' || *c == 'B')
 				cmd = ft_strdup(history[i]);
+			ft_putstr(cmd);
 		}
 		else
 		{
 			c[0] = cac;
 			c[1] = '\0';
 			if (cac != 127)
+			{
+				ft_putchar(cac);
 				cmd = ft_strjoin(cmd, c);
+			}
 			else
 				cmd = ft_delone(cmd);
 		}
-		ft_prompt2(env, ret, id_usr);
-		ft_putstr(cmd);
 	}
 	ft_putchar(10);
 	fd = open(".minishell1_history", O_WRONLY | O_APPEND);

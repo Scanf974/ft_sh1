@@ -6,7 +6,7 @@
 /*   By: bsautron <bsautron@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2014/12/25 06:22:31 by bsautron          #+#    #+#             */
-/*   Updated: 2015/01/03 00:33:46 by bsautron         ###   ########.fr       */
+/*   Updated: 2015/01/14 05:04:20 by bsautron         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,10 +63,12 @@ int			ft_setenv(char ***env, char *xport)
 			xport++;
 		if ((eq = ft_pos_eq(xport)) == -1)
 			return (0);
-		if ((id = ft_get_id_var(*env, ft_strsub(xport, 0, eq))) != -1)
-			(*env)[id] = ft_strjoin(ft_strndup(xport, eq + 1), ft_strndup(xport + eq + 1, ft_strlen_esp(xport + eq + 1)));
+		if ((id = ft_get_id_var(*env, ft_strsub(xport, 0, eq + 1))) != -1)
+			(*env)[id] = ft_strjoin(ft_strndup(xport, eq + 1),
+					ft_strndup(xport + eq + 1, ft_strlen_esp(xport + eq + 1)));
 		else
-			*env = ft_realloc_env(*env, ft_strndup(xport, ft_strlen_esp(xport)));
+			*env = ft_realloc_env(*env,
+					ft_strndup(xport, ft_strlen_esp(xport)));
 		xport += ft_strlen_esp(xport);
 	}
 	return (0);

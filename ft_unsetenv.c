@@ -6,7 +6,7 @@
 /*   By: bsautron <bsautron@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2014/12/25 07:58:27 by bsautron          #+#    #+#             */
-/*   Updated: 2015/01/03 01:45:49 by bsautron         ###   ########.fr       */
+/*   Updated: 2015/01/14 05:02:37 by bsautron         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,8 @@ int			ft_unsetenv(char ***env, char *del)
 	{
 		while (*del <= ' ')
 			del++;
-		while ((*env)[id] && !ft_strnequ((*env)[id], del, ft_strlen_esp(del)))
+		while ((*env)[id] && !ft_strnequ((*env)[id],
+					ft_strjoin(del, "="), ft_strlen_esp(del) + 1))
 			id++;
 		if (id < nb_env)
 			*env = ft_realloc_env(*env, id);

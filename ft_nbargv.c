@@ -1,43 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_fuckit.c                                        :+:      :+:    :+:   */
+/*   ft_nbargv.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bsautron <bsautron@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2015/01/03 01:27:35 by bsautron          #+#    #+#             */
-/*   Updated: 2015/01/03 01:41:37 by bsautron         ###   ########.fr       */
+/*   Created: 2015/01/14 06:11:56 by bsautron          #+#    #+#             */
+/*   Updated: 2015/01/14 06:14:13 by bsautron         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_minishell1.h"
 
-char                *ft_fuckit(char *s)
+int	ft_nbargv(char *str)
 {
-	char            *new;
-	int             i;
-	int             j;
+	int		i;
+	int		nb;
 
+	nb = 0;
 	i = 0;
-	j = 0;
-	new = (char *)malloc(sizeof(char) * ft_strlen(s));
-	while (s[i])
+	if (str)
 	{
-		if (s[i] <= ' ' && new[j - 1] != ' ')
+		while (str[i])
 		{
-			new[j] = ' ';
+			if (str[i] > ' ' && (str[i + 1] <= ' ' || !str[i + 1]))
+				nb++;
 			i++;
-			j++;
-		}
-		else if (s[i] <= ' ')
-			i++;
-		else
-		{
-			new[j] = s[i];
-			i++;
-			j++;
 		}
 	}
-	new[j] = '\0';
-	return (new);
+	return (nb);
 }

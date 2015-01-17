@@ -1,38 +1,40 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strtrim_new.c                                   :+:      :+:    :+:   */
+/*   ft_join_or_del.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bsautron <bsautron@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2015/01/14 02:18:27 by bsautron          #+#    #+#             */
-/*   Updated: 2015/01/15 18:50:09 by bsautron         ###   ########.fr       */
+/*   Created: 2015/01/17 00:43:45 by bsautron          #+#    #+#             */
+/*   Updated: 2015/01/17 00:44:19 by bsautron         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_minishell1.h"
 
-char	*ft_strtrim_new(char const *s)
+static char	*ft_delone(char *cmd)
 {
-	int		i;
-	char	*tmp;
-	char	*dst;
-
-	tmp = (char *)s;
-	dst = NULL;
-	i = 0;
-	if (tmp)
+	if (ft_strlen(cmd) > 0)
 	{
-		i = ft_strlen(s) - 1;
-		while (i >= 0 && tmp[i] <= ' ')
-		{
-			tmp[i] = '\0';
-			i--;
-		}
-		i = 0;
-		while (tmp[i] && tmp[i] <= ' ')
-			i++;
-		dst = ft_strdup(&tmp[i]);
+		if (cmd[ft_strlen(cmd) - 1] == '\t')
+			ft_nclear(4);
+		else
+			ft_nclear(1);
 	}
-	return (dst);
+	cmd[ft_strlen(cmd) - 1] = '\0';
+	return (cmd);
+}
+
+char		*ft_join_or_del(char *cmd, char *c, char cac)
+{
+	c[0] = cac;
+	c[1] = '\0';
+	if (cac != 127)
+	{
+		ft_putchar(cac);
+		cmd = ft_strjoin(cmd, c);
+	}
+	else
+		cmd = ft_delone(cmd);
+	return (cmd);
 }

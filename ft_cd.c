@@ -6,7 +6,7 @@
 /*   By: bsautron <bsautron@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2014/12/25 04:51:47 by bsautron          #+#    #+#             */
-/*   Updated: 2015/01/14 06:34:01 by bsautron         ###   ########.fr       */
+/*   Updated: 2015/01/17 00:35:21 by bsautron         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ static void	ft_foock(char ***env, char *path, struct stat buf)
 	int				id;
 	char			*pwd;
 
-	if (ft_strnequ(path, "-", 1))
+	if (ft_strequ(path, "-"))
 		ft_tiret(*env, path);
 	ft_switch(env);
 	id = ft_get_id_var(*env, "PWD");
@@ -96,25 +96,26 @@ int			ft_cd(char ***env, char *path)
 	int				id_home;
 	struct stat		buf;
 	int				ret;
+	char			**tab;
+	char			*r_path;
 
 	ret = 0;
-	path = ft_strtrim_new(path);
-	path = ft_path_tild(*env, path);
-	if (ft_nbargv(path) > 1)
-		path = ft_strjoin(ft_getpath_pwd(ft_getcmd(path)),
-				ft_strtrim_new(path + ft_strlen(ft_getcmd(path))));
-	if (ft_error_cd(*env, path) || ft_not_dir(path))
-		return (-1);
+	tab = ft_strsplit_whitespace(path);
+	if (!(*tab))
+		*tab = ft_strnew(1);
+	tab[0] = ft_path_tild(*env, tab[0]);
 	bzero(&buf, sizeof(buf));
 	if (ft_onlyesp(path) ||
-			ft_strnequ(path, "~", 1) || ft_strnequ(path, "--", 2))
-	{
+			ft_strnequ(tab[0], "~", 1) || ft_strnequ(tab[0], "--", 2))
 		if ((id_home = ft_get_id_var(*env, "HOME")) != -1)
-			path = ft_strjoin(&env[0][id_home][5], path + ft_strlen(path));
-	}
-	if ((lstat(path, &buf) == 0 && (S_ISDIR(buf.st_mode)
-					|| (S_ISLNK(buf.st_mode) && opendir(path)))) ||
-			path[0] == '-')
-		ft_foock(env, path, buf);
+			tab[0] = &env[0][id_home][5];
+	if (ft_error_cd(*env, tab, path) || ft_not_dir(tab, path))
+		return (-1);
+	r_path = tab[0];
+	if (ft_nb_env(tab) > 1 && !ft_onlyesp(path))
+		r_path = tab[1];
+	if ((lstat(r_path, &buf) == 0 && (S_ISDIR(buf.st_mode) ||
+		(S_ISLNK(buf.st_mode) && opendir(r_path)))) || ft_strequ(r_path, "-"))
+		ft_foock(env, r_path, buf);
 	return (ret);
 }

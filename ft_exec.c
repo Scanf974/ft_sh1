@@ -6,7 +6,7 @@
 /*   By: bsautron <bsautron@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/01/03 02:25:48 by bsautron          #+#    #+#             */
-/*   Updated: 2015/01/14 02:10:36 by bsautron         ###   ########.fr       */
+/*   Updated: 2015/01/15 21:05:38 by bsautron         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int			ft_exec(char *bin, char *cmd, char **env)
 		waitpid(child, &status, 0);
 	else
 	{
-		execve(bin, ft_strsplit_white_space(cmd), env);
+		execve(bin, ft_strsplit_whitespace(cmd), env);
 		exit(-1);
 	}
 	return (WEXITSTATUS(status));

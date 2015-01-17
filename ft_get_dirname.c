@@ -1,38 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strtrim_new.c                                   :+:      :+:    :+:   */
+/*   ft_get_dirname.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bsautron <bsautron@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2015/01/14 02:18:27 by bsautron          #+#    #+#             */
-/*   Updated: 2015/01/15 18:50:09 by bsautron         ###   ########.fr       */
+/*   Created: 2015/01/17 00:35:43 by bsautron          #+#    #+#             */
+/*   Updated: 2015/01/17 00:41:54 by bsautron         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_minishell1.h"
 
-char	*ft_strtrim_new(char const *s)
+char	*ft_get_dirname(void)
 {
-	int		i;
-	char	*tmp;
-	char	*dst;
+	char	*path;
+	int		len;
 
-	tmp = (char *)s;
-	dst = NULL;
-	i = 0;
-	if (tmp)
-	{
-		i = ft_strlen(s) - 1;
-		while (i >= 0 && tmp[i] <= ' ')
-		{
-			tmp[i] = '\0';
-			i--;
-		}
-		i = 0;
-		while (tmp[i] && tmp[i] <= ' ')
-			i++;
-		dst = ft_strdup(&tmp[i]);
-	}
-	return (dst);
+	path = ft_pwd();
+	len = ft_strlen(path);
+	while (path[len] != '/')
+		len--;
+	if (!path[len - 1])
+		return (path + len);
+	return (path + len + 1);
 }

@@ -6,7 +6,7 @@
 /*   By: bsautron <bsautron@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2014/12/25 06:22:31 by bsautron          #+#    #+#             */
-/*   Updated: 2015/01/14 05:04:20 by bsautron         ###   ########.fr       */
+/*   Updated: 2015/01/15 18:06:52 by bsautron         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,11 +51,6 @@ int			ft_setenv(char ***env, char *xport)
 	int		eq;
 	int		id;
 
-	if (!xport || ft_onlyesp(xport))
-	{
-		ft_env(*env, "");
-		return (0);
-	}
 	xport = ft_strtrim(xport);
 	while (*xport)
 	{

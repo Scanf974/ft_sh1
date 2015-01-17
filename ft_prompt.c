@@ -6,38 +6,12 @@
 /*   By: bsautron <bsautron@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/01/14 02:25:46 by bsautron          #+#    #+#             */
-/*   Updated: 2015/01/14 05:18:06 by bsautron         ###   ########.fr       */
+/*   Updated: 2015/01/17 00:49:05 by bsautron         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_minishell1.h"
-
-static char	*ft_get_dirname(void)
-{
-	char	*path;
-	int		len;
-
-	path = ft_pwd();
-	len = ft_strlen(path);
-	while (path[len] != '/')
-		len--;
-	if (!path[len - 1])
-		return (path + len);
-	return (path + len + 1);
-}
-
-
-static char	*ft_delone(char *cmd)
-{
-	if (ft_strlen(cmd) > 0)
-	{
-		ft_putstr("\033[1D");
-		ft_putstr(" ");
-		ft_putstr("\033[1D");
-	}
-	cmd[ft_strlen(cmd) - 1] = '\0';
-	return (cmd);
-}
+#define NIQUE	char **history, char *cmd_saved, char *cmd
 
 static void	ft_prompt2(char **env, int ret, int id_usr)
 {
@@ -65,101 +39,99 @@ static void	ft_prompt2(char **env, int ret, int id_usr)
 	ft_putstr("\033[0;37;40m ");
 }
 
-static char	**ft_make_history(int *nb_hist)
+static void	ft_increm(int *i, int nb, char c)
 {
-	char	*line;
-	char	**tab;
-	int		fd;
-	int		i;
-
-	fd = open(".minishell1_history", O_CREAT | O_RDWR, 0600);
-	while (get_next_line(fd, &line) > 0)
-		(*nb_hist)++;
-	close(fd);
-	fd = open(".minishell1_history", O_CREAT | O_RDONLY);
-	i = 0;
-	tab = (char **)malloc(sizeof(char *) * (*nb_hist + 1));
-	while (get_next_line(fd, &line) > 0)
+	if (c == 'A')
 	{
-		tab[i] = ft_strdup(line);
-		i++;
+		(*i)--;
+		if (*i < 0)
+			*i = 0;
 	}
-	tab[i] = NULL;
-	close(fd);
-	return (tab);
-}
-
-static void	ft_nclear(size_t n)
-{
-	size_t		i;
-
-	i = 0;
-	while (i < n)
+	if (c == 'B')
 	{
-		ft_putstr("\033[1D");
-		ft_putstr(" ");
-		ft_putstr("\033[1D");
-		i++;
+		(*i)++;
+		if (*i > nb)
+			*i = nb;
 	}
 }
 
-char		*ft_prompt(char **env, int ret)
+static char	*ft_increm2(char c, NIQUE, int *i, int nb)
 {
-	char			*cmd;
-	char			**history;
-	int				id_usr;
-	char			c[2];
-	char			cac;
-	int				fd;
-	int				nb;
-	int				i;
+	if (c == 'A' || c == 'B')
+	{
+		if (c == 'A')
+		{
+			while (*i > 0
+				&& (!ft_strnequ(cmd_saved, history[*i], ft_strlen(cmd_saved))
+				|| ft_onlyesp(history[*i]) || ft_strequ(cmd, history[*i])))
+				(*i)--;
+		}
+		else
+		{
+			while (*i < nb
+				&& (!ft_strnequ(cmd_saved, history[*i], ft_strlen(cmd_saved))
+				|| ft_onlyesp(history[*i]) || ft_strequ(cmd, history[*i])))
+				(*i)++;
+		}
+		if (history[*i] && ft_strnequ(cmd_saved, history[*i],
+					ft_strlen(cmd_saved)))
+			cmd = ft_strdup(history[*i]);
+		else
+			cmd = ft_strdup(cmd_saved);
+	}
+	ft_putstr(cmd);
+	return (cmd);
+}
+
+static char	*ft_gnlr(char *path_h, char *cmd, char *cmd_saved)
+{
+	int			nb;
+	char		c[2];
+	char		cac;
+	int			i;
+	char		**history;
 
 	nb = 0;
-	history = ft_make_history(&nb);
-	id_usr = ft_get_id_var(env, "USER");
-	ft_prompt2(env, ret, id_usr);
-	cmd = ft_strnew(1);
-	i = nb;
+	history = ft_make_history(&nb, &i, path_h);
 	while (read(0, &cac, 1) != 0 && cac != '\n')
 	{
 		if (cac == '\033')
 		{
 			read(0, c, 1);
 			read(0, c, 1);
-			if (*c == 'A')
-			{
-				i--;
-				if (i < 0)
-					i = 0;
-			}
-			if (*c == 'B')
-			{
-				i++;
-				if (i > nb)
-					i = nb;
-			}
+			ft_increm(&i, nb, *c);
 			ft_nclear(ft_strlen(cmd));
-			if (i == nb && (*c == 'A' || *c == 'B'))
-				cmd = ft_strdup("");
-			else if (*c == 'A' || *c == 'B')
-				cmd = ft_strdup(history[i]);
-			ft_putstr(cmd);
+			cmd = ft_increm2(*c, history, cmd_saved, cmd, &i, nb);
 		}
 		else
 		{
-			c[0] = cac;
-			c[1] = '\0';
-			if (cac != 127)
-			{
-				ft_putchar(cac);
-				cmd = ft_strjoin(cmd, c);
-			}
-			else
-				cmd = ft_delone(cmd);
+			cmd = ft_join_or_del(cmd, c, cac);
+			cmd_saved = ft_strdup(cmd);
 		}
 	}
-	ft_putchar(10);
-	fd = open(".minishell1_history", O_WRONLY | O_APPEND);
+	return (cmd);
+}
+
+char		*ft_prompt(char **env, int ret)
+{
+	char			*cmd;
+	char			*cmd_saved;
+	int				id_usr;
+	int				fd;
+	char			*path_h;
+
+	path_h = ft_strdup(".ft_minishell1_history");
+	if (ft_get_id_var(env, "HOME") != -1)
+		path_h = ft_strjoin(&env[ft_get_id_var(env, "HOME")][5],
+				"/.ft_minishell1_history");
+	id_usr = ft_get_id_var(env, "USER");
+	ft_prompt2(env, ret, id_usr);
+	cmd = ft_strnew(1);
+	cmd_saved = ft_strnew(1);
+	cmd = ft_gnlr(path_h, cmd, cmd_saved);
+	ft_putchar('\n');
+	fd = open(path_h, O_WRONLY | O_APPEND);
+	free(path_h);
 	write(fd, cmd, ft_strlen(cmd));
 	write(fd, "\n", 1);
 	close(fd);

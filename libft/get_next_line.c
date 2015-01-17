@@ -6,7 +6,7 @@
 /*   By: bsautron <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2014/11/11 13:21:33 by bsautron          #+#    #+#             */
-/*   Updated: 2014/11/26 17:24:03 by bsautron         ###   ########.fr       */
+/*   Updated: 2015/01/15 22:13:05 by bsautron         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 static int	have_back(char *str)
 {
-	int		i;
+	size_t		i;
 
 	i = 0;
 	if (str)
@@ -26,6 +26,8 @@ static int	have_back(char *str)
 			i++;
 		}
 	}
+	if (i == ft_strlen(str))
+		return (i);
 	return (0);
 }
 

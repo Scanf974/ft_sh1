@@ -1,38 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strtrim_new.c                                   :+:      :+:    :+:   */
+/*   ft_nclear.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bsautron <bsautron@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2015/01/14 02:18:27 by bsautron          #+#    #+#             */
-/*   Updated: 2015/01/15 18:50:09 by bsautron         ###   ########.fr       */
+/*   Created: 2015/01/17 00:37:07 by bsautron          #+#    #+#             */
+/*   Updated: 2015/01/17 00:38:30 by bsautron         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_minishell1.h"
 
-char	*ft_strtrim_new(char const *s)
+void	ft_nclear(size_t n)
 {
-	int		i;
-	char	*tmp;
-	char	*dst;
+	size_t		i;
 
-	tmp = (char *)s;
-	dst = NULL;
 	i = 0;
-	if (tmp)
+	while (i < n)
 	{
-		i = ft_strlen(s) - 1;
-		while (i >= 0 && tmp[i] <= ' ')
-		{
-			tmp[i] = '\0';
-			i--;
-		}
-		i = 0;
-		while (tmp[i] && tmp[i] <= ' ')
-			i++;
-		dst = ft_strdup(&tmp[i]);
+		ft_putstr("\033[1D");
+		ft_putstr(" ");
+		ft_putstr("\033[1D");
+		i++;
 	}
-	return (dst);
 }

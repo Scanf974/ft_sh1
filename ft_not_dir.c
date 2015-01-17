@@ -6,20 +6,42 @@
 /*   By: bsautron <bsautron@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/01/14 06:29:40 by bsautron          #+#    #+#             */
-/*   Updated: 2015/01/14 06:35:01 by bsautron         ###   ########.fr       */
+/*   Updated: 2015/01/15 23:52:33 by bsautron         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_minishell1.h"
 
-int		ft_not_dir(char *path)
+static void	ft_make_second(char **tab)
+{
+	int		i;
+	int		j;
+	char	*pwd;
+
+	pwd = ft_pwd();
+	i = ft_strlen(pwd) - 1;
+	j = ft_strlen(tab[0]) - 1;
+	while (i >= 0 && pwd[i] == tab[0][j])
+	{
+		pwd[i] = '\0';
+		i--;
+		j--;
+	}
+	tab[1] = ft_strjoin(pwd, tab[1]);
+}
+
+int			ft_not_dir(char **tab, char *d_path)
 {
 	struct stat		buf;
+	char			*path;
 
-	if (ft_nbargv(path) > 1)
-		path = ft_strtrim_new(path + ft_strlen(ft_getcmd(path)));
-	if (ft_onlyesp(path) ||
-			ft_strnequ(path, "-", 1) || ft_strnequ(path, "~", 1))
+	path = tab[0];
+	if (!ft_onlyesp(d_path) && ft_nb_env(tab) > 1)
+	{
+		ft_make_second(tab);
+		path = tab[1];
+	}
+	if (ft_strequ(path, "-") || ft_strequ(path, "--") || ft_strequ(path, "~"))
 		return (0);
 	if (lstat(path, &buf) == 0 &&
 			!S_ISDIR(buf.st_mode) && !S_ISLNK(buf.st_mode))
